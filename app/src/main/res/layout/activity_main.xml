@@ -18,7 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="Bienvenido\nNOMBRE"
+            android:text="Bienvenido\NOMBRE"
             android:textAlignment="center"
             android:textColor="#FFFFFF"
             android:background="@drawable/bg_gradient"
@@ -91,7 +91,7 @@
                             android:layout_width="120dp"
                             android:layout_height="35dp"
                             android:paddingBottom="0dp"
-                            android:text="7.9"
+                            android:text="Cargando Información"
                             android:textColor="#888888" />
 
                         <!-- Divisor horizontal -->

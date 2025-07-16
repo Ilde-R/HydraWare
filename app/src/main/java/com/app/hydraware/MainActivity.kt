@@ -23,7 +23,7 @@ class MainActivity : AppCompatActivity() {
         // Asocia el TextView del layout
         textTempValue = findViewById(R.id.textTempValue)
 
-        // Escucha los cambios de temperatura
+        // Escucha los cambios de temperatura de FIREBASE
         val tempRef = database.child("sensores").child("temperatura").child("temperatura")
         tempRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
