@@ -1,49 +1,34 @@
 package com.app.hydraware
 
 import android.os.Bundle
-import android.util.Log
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import com.google.firebase.FirebaseApp
-import com.google.firebase.database.*
+import androidx.fragment.app.Fragment
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import android.view.View
 
 class MainActivity : AppCompatActivity() {
-
-    private lateinit var textTempValue: TextView
-    private lateinit var database: DatabaseReference
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // Inicializa Firebase
-        FirebaseApp.initializeApp(this)
-        database = FirebaseDatabase.getInstance().reference
-
-        // Asocia el TextView del layout
-        textTempValue = findViewById(R.id.textTempValue)
-
-        // Escucha los cambios de temperatura
-        val tempRef = database.child("sensores").child("temperatura").child("temperatura")
-        tempRef.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val temp = snapshot.getValue(Double::class.java)
-                if (temp != null) {
-                    val status = when {
-                        temp < 20 -> "Frío"
-                        temp <= 30 -> "Estable"
-                        else -> "Caliente"
-                    }
-                    textTempValue.text = "Temp: ${temp}°C - $status"
-                } else {
-                    textTempValue.text = "Temp: N/A"
-                }
+        val bottomNav = findViewById<BottomNavigationView>(R.id.bottom_navigation)
+        if (savedInstanceState == null) {
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, SplashFragment())
+                .commit()
+            bottomNav.visibility = View.GONE
+        }
+        bottomNav.setOnItemSelectedListener { item ->
+            val fragment: Fragment = when (item.itemId) {
+                R.id.nav_home -> HomeFragment()
+                R.id.nav_analysis -> AnalysisFragment()
+                else -> HomeFragment()
             }
-
-            override fun onCancelled(error: DatabaseError) {
-                Log.e("Firebase", "Error al leer temperatura", error.toException())
-                textTempValue.text = "Error al cargar"
-            }
-        })
+            supportFragmentManager.beginTransaction()
+                .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
+                .replace(R.id.fragment_container, fragment)
+                .commit()
+            true
+        }
     }
 }
