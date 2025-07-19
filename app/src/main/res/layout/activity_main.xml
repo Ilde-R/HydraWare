@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -15,10 +16,11 @@
         android:layout_marginBottom="16dp">
 
         <TextView
+            android:id="@+id/textWelcomeMessage"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="Bienvenido\NOMBRE"
+            android:text="Bienvenido"
             android:textAlignment="center"
             android:textColor="#FFFFFF"
             android:background="@drawable/bg_gradient"
@@ -50,7 +52,7 @@
                 android:layout_gravity="center_vertical"
                 android:layout_marginEnd="8dp" />
 
-            <!-- Datos: pH y Temperatura -->
+            <!-- Datos: pH, Temperatura, Fecha y Hora -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_weight="1"
@@ -88,6 +90,7 @@
                             android:paddingBottom="4dp" />
 
                         <TextView
+                            android:id="@+id/textPhValue"
                             android:layout_width="120dp"
                             android:layout_height="35dp"
                             android:paddingBottom="0dp"
@@ -103,9 +106,10 @@
                             android:layout_marginBottom="4dp" />
 
                         <TextView
+                            android:id="@+id/textPhStatus"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Moderado"
+                            android:text="Cargando..."
                             android:textColor="#00C896" />
                     </LinearLayout>
 
@@ -148,15 +152,46 @@
                             android:layout_marginBottom="4dp" />
 
                         <TextView
+                            android:id="@+id/textTempStatus"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Estable"
+                            android:text="Cargando..."
                             android:textColor="#00C896" />
                     </LinearLayout>
                 </LinearLayout>
-            </LinearLayout>
 
+                <!-- Fecha y Hora -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginTop="12dp"
+                    android:gravity="center_horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Última Actualización"
+                        android:textStyle="bold"
+                        android:paddingBottom="4dp" />
+
+                    <TextView
+                        android:id="@+id/textDateTimeValue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Cargando Información..."
+                        android:textColor="#888888" />
+                </LinearLayout>
+                <Button
+                    android:id="@+id/btnVerHistorial"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Ver Historial Completo"
+                    android:layout_marginTop="20dp"
+                    />
+            </LinearLayout>
         </LinearLayout>
+
 
     </androidx.cardview.widget.CardView>
 

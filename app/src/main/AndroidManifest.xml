@@ -12,7 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Hydraware">
         <activity
-            android:name=".AnalysisActivity"
+            android:name=".AnalisisActivity"
             android:exported="false" />
         <activity
             android:name=".MainActivity"
