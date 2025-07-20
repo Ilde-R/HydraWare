@@ -8,4 +8,4 @@
         android:id="@+id/nav_analysis"
         android:icon="@drawable/ic_launcher_foreground"
         android:title="Análisis" />
-</menu> 
+</menu>
