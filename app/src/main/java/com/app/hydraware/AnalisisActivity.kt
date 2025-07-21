@@ -1,11 +1,15 @@
 package com.app.hydraware
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.database.*
 
 class AnalisisActivity : AppCompatActivity() {
@@ -22,6 +26,10 @@ class AnalisisActivity : AppCompatActivity() {
     private lateinit var tvEstadoGeneral: TextView
     private lateinit var tvRecomendacionPH: TextView
     private lateinit var tvRecomendacionTemp: TextView
+
+    // Barra y FAB
+    private lateinit var bottomNavigationView: BottomNavigationView
+    private lateinit var fabCenter: FloatingActionButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,7 +67,6 @@ class AnalisisActivity : AppCompatActivity() {
                 }
                 adapter.notifyDataSetChanged()
 
-                // Mostrar el primer registro por defecto si existe
                 if (listaHistorial.isNotEmpty()) {
                     actualizarDatosPantallaGrande(listaHistorial[0])
                 }
@@ -69,13 +76,33 @@ class AnalisisActivity : AppCompatActivity() {
                 Log.e("AnalisisActivity", "Error al leer Firebase: ${error.message}")
             }
         })
+
+        // BottomNavigationView y FAB
+        bottomNavigationView = findViewById(R.id.bottomNavigation)
+        fabCenter = findViewById(R.id.fab_center)
+
+        bottomNavigationView.selectedItemId = R.id.nav_analysis
+
+        bottomNavigationView.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_home -> {
+                    startActivity(Intent(this, MainActivity::class.java))
+                    finish()
+                    true
+                }
+                R.id.nav_analysis -> true // Ya estamos aquí
+                else -> false
+            }
+        }
+
+        fabCenter.setOnClickListener {
+            Toast.makeText(this, "Botón central (FAB) pulsado en Analisis", Toast.LENGTH_SHORT).show()
+            // Aquí puedes agregar la acción que quieres para el FAB en AnalisisActivity
+        }
     }
 
     private fun actualizarDatosPantallaGrande(lectura: Lectura) {
-        // Mostrar fecha y hora del registro seleccionado
         tvFechaHora.text = "Fecha: ${lectura.fecha} / Hora: ${lectura.hora}"
-
-        // Mostrar valores de pH y temperatura
         tvValorPH.text = lectura.ph.toString()
         tvValorTemp.text = "${lectura.temperatura} °C"
 
