@@ -7,23 +7,20 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.database.*
 
 class AnalisisFragment : Fragment() {
 
-    private lateinit var tvTitulo: TextView
-    private lateinit var tvFechaHora: TextView
-    private lateinit var tvEstadoGeneral: TextView
-
-    private lateinit var tvValorPH: TextView
-    private lateinit var tvRangoPH: TextView
-    private lateinit var tvRecomendacionPH: TextView
-
-    private lateinit var tvValorTemp: TextView
-    private lateinit var tvRangoTemp: TextView
-    private lateinit var tvRecomendacionTemp: TextView
-
+    private lateinit var rvHistorialLecturas: RecyclerView
     private lateinit var database: DatabaseReference
+
+    private val listaLecturas = mutableListOf<Lectura>()
+    private lateinit var adapter: LecturaAdapter
+
+    // Para controlar qué ítem está expandido (-1 significa ninguno)
+    private var expandedPosition = -1
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -35,124 +32,108 @@ class AnalisisFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Vincular views (asegúrate IDs coinciden con XML)
-        tvTitulo = view.findViewById(R.id.tvTitulo)
-        tvFechaHora = view.findViewById(R.id.tvFechaHora)
-        tvEstadoGeneral = view.findViewById(R.id.tvEstadoGeneral)
+        rvHistorialLecturas = view.findViewById(R.id.recyclerHistorial)
+        rvHistorialLecturas.layoutManager = LinearLayoutManager(requireContext())
 
-        tvValorPH = view.findViewById(R.id.tvValorPH)
-        tvRangoPH = view.findViewById(R.id.tvRangoPH)
-        tvRecomendacionPH = view.findViewById(R.id.tvRecomendacionPH)
+        adapter = LecturaAdapter(
+            listaLecturas,
+            expandedPositionProvider = { expandedPosition },
+            onItemClick = { clickedPosition ->
+                val previousExpanded = expandedPosition
+                expandedPosition = if (expandedPosition == clickedPosition) -1 else clickedPosition
+                if (previousExpanded != -1) adapter.notifyItemChanged(previousExpanded)
+                adapter.notifyItemChanged(expandedPosition)
 
-        tvValorTemp = view.findViewById(R.id.tvValorTemp)
-        tvRangoTemp = view.findViewById(R.id.tvRangoTemp)
-        tvRecomendacionTemp = view.findViewById(R.id.tvRecomendacionTemp)
+                // Mostrar datos seleccionados en los cards principales
+                mostrarLecturaSeleccionada(listaLecturas[clickedPosition])
+            }
+        )
+
+        rvHistorialLecturas.adapter = adapter
 
         database = FirebaseDatabase.getInstance().reference
+        val historialRef = database.child("historial")
 
-        val analisisRef = database.child("ultimaLectura")
-
-        analisisRef.addValueEventListener(object : ValueEventListener {
+        historialRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val ph = snapshot.child("ph").getValue(Double::class.java)
-                val temp = snapshot.child("temperatura").getValue(Double::class.java)
-                val fecha = snapshot.child("fecha").getValue(String::class.java)
-                val hora = snapshot.child("hora").getValue(String::class.java)
-
-                // Actualizar pH
-                if (ph != null) {
-                    tvValorPH.text = ph.toString()
-
-                    when {
-                        ph < 6.5 -> {
-                            tvRangoPH.text = "Ácido"
-                            tvRecomendacionPH.text = "El pH es ácido, se recomienda alcalinizar el agua."
-                            tvValorPH.setTextColor(resources.getColor(android.R.color.holo_red_dark))
-                            tvRangoPH.setTextColor(resources.getColor(android.R.color.holo_red_dark))
-                            tvRecomendacionPH.setTextColor(resources.getColor(android.R.color.holo_red_dark))
-                        }
-                        ph <= 8.5 -> {
-                            tvRangoPH.text = "Ideal"
-                            tvRecomendacionPH.text = "El pH está en rango óptimo."
-                            tvValorPH.setTextColor(resources.getColor(android.R.color.holo_green_dark))
-                            tvRangoPH.setTextColor(resources.getColor(android.R.color.holo_green_dark))
-                            tvRecomendacionPH.setTextColor(resources.getColor(android.R.color.holo_green_dark))
-                        }
-                        else -> {
-                            tvRangoPH.text = "Alcalino"
-                            tvRecomendacionPH.text = "El pH es alcalino, se recomienda acidificar el agua."
-                            tvValorPH.setTextColor(resources.getColor(android.R.color.holo_red_dark))
-                            tvRangoPH.setTextColor(resources.getColor(android.R.color.holo_red_dark))
-                            tvRecomendacionPH.setTextColor(resources.getColor(android.R.color.holo_red_dark))
-                        }
+                listaLecturas.clear()
+                for (lecturaSnap in snapshot.children) {
+                    val lectura = lecturaSnap.getValue(Lectura::class.java)
+                    if (lectura != null) {
+                        listaLecturas.add(lectura)
                     }
-                } else {
-                    tvValorPH.text = "N/A"
-                    tvRangoPH.text = "-"
-                    tvRecomendacionPH.text = "No hay datos de pH."
                 }
+                // Mostrar datos más recientes primero
+                listaLecturas.reverse()
 
-                // Actualizar Temperatura
-                if (temp != null) {
-                    tvValorTemp.text = "$temp °C"
+                // Resetear expandido al actualizar lista para evitar inconsistencia
+                expandedPosition = -1
 
-                    when {
-                        temp < 20 -> {
-                            tvRangoTemp.text = "Frío"
-                            tvRecomendacionTemp.text = "Temperatura baja, aumenta temperatura del agua."
-                            tvValorTemp.setTextColor(resources.getColor(android.R.color.holo_red_dark))
-                            tvRangoTemp.setTextColor(resources.getColor(android.R.color.holo_red_dark))
-                            tvRecomendacionTemp.setTextColor(resources.getColor(android.R.color.holo_red_dark))
-                        }
-                        temp <= 30 -> {
-                            tvRangoTemp.text = "Estable"
-                            tvRecomendacionTemp.text = "Temperatura óptima."
-                            tvValorTemp.setTextColor(resources.getColor(android.R.color.holo_green_dark))
-                            tvRangoTemp.setTextColor(resources.getColor(android.R.color.holo_green_dark))
-                            tvRecomendacionTemp.setTextColor(resources.getColor(android.R.color.holo_green_dark))
-                        }
-                        else -> {
-                            tvRangoTemp.text = "Caliente"
-                            tvRecomendacionTemp.text = "Temperatura alta, enfría el agua."
-                            tvValorTemp.setTextColor(resources.getColor(android.R.color.holo_red_dark))
-                            tvRangoTemp.setTextColor(resources.getColor(android.R.color.holo_red_dark))
-                            tvRecomendacionTemp.setTextColor(resources.getColor(android.R.color.holo_red_dark))
-                        }
-                    }
-                } else {
-                    tvValorTemp.text = "N/A"
-                    tvRangoTemp.text = "-"
-                    tvRecomendacionTemp.text = "No hay datos de temperatura."
+                adapter.notifyDataSetChanged()
+
+                // Opcional: mostrar el primer dato si existe
+                if (listaLecturas.isNotEmpty()) {
+                    mostrarLecturaSeleccionada(listaLecturas[0])
                 }
-
-                // Fecha y Hora
-                if (fecha != null && hora != null) {
-                    tvFechaHora.text = "Fecha: $fecha / Hora: $hora"
-                } else {
-                    tvFechaHora.text = "Fecha y hora no disponibles"
-                }
-
-                // Estado General (Ejemplo simple: basado en ph y temp)
-                val estado = when {
-                    ph == null || temp == null -> "Datos insuficientes"
-                    ph < 6.5 || ph > 8.5 -> "Atención: pH fuera de rango"
-                    temp < 20 || temp > 30 -> "Atención: Temperatura fuera de rango"
-                    else -> "Estado normal"
-                }
-                tvEstadoGeneral.text = estado
             }
 
             override fun onCancelled(error: DatabaseError) {
-                Log.e("Firebase", "Error al leer datos", error.toException())
-                tvEstadoGeneral.text = "Error al cargar datos"
-                tvFechaHora.text = ""
-                tvValorPH.text = "-"
-                tvRangoPH.text = "-"
-                tvRecomendacionPH.text = "-"
-                tvValorTemp.text = "-"
-                tvRangoTemp.text = "-"
-                tvRecomendacionTemp.text = "-"
+                Log.e("Firebase", "Error al leer historial", error.toException())
             }
         })
+    }
+
+    private fun mostrarLecturaSeleccionada(lectura: Lectura) {
+        val tvFechaHora = view?.findViewById<TextView>(R.id.tvFechaHora)
+        val tvValorPH = view?.findViewById<TextView>(R.id.tvValorPH)
+        val tvRangoPH = view?.findViewById<TextView>(R.id.tvRangoPH)
+        val tvRecomendacionPH = view?.findViewById<TextView>(R.id.tvRecomendacionPH)
+
+        val tvValorTemp = view?.findViewById<TextView>(R.id.tvValorTemp)
+        val tvRangoTemp = view?.findViewById<TextView>(R.id.tvRangoTemp)
+        val tvRecomendacionTemp = view?.findViewById<TextView>(R.id.tvRecomendacionTemp)
+
+        val tvEstadoGeneral = view?.findViewById<TextView>(R.id.tvEstadoGeneral)
+
+        tvFechaHora?.text = "Fecha: ${lectura.fecha ?: "--"} / Hora: ${lectura.hora ?: "--"}"
+        tvValorPH?.text = lectura.ph?.toString() ?: "No hay datos"
+        val ph = lectura.ph ?: 0.0
+        when {
+            ph < 6.5 -> {
+                tvRangoPH?.text = "pH bajo"
+                tvRecomendacionPH?.text = "Ajustar pH al alza"
+            }
+            ph in 6.5..8.5 -> {
+                tvRangoPH?.text = "pH normal"
+                tvRecomendacionPH?.text = "Condiciones óptimas"
+            }
+            else -> {
+                tvRangoPH?.text = "pH alto"
+                tvRecomendacionPH?.text = "Ajustar pH a la baja"
+            }
+        }
+
+        tvValorTemp?.text = lectura.temperatura?.toString() ?: "No hay datos"
+        val temp = lectura.temperatura ?: 0.0
+        when {
+            temp < 20 -> {
+                tvRangoTemp?.text = "Temperatura baja"
+                tvRecomendacionTemp?.text = "Aumentar temperatura"
+            }
+            temp in 20.0..30.0 -> {
+                tvRangoTemp?.text = "Temperatura normal"
+                tvRecomendacionTemp?.text = "Condiciones óptimas"
+            }
+            else -> {
+                tvRangoTemp?.text = "Temperatura alta"
+                tvRecomendacionTemp?.text = "Reducir temperatura"
+            }
+        }
+
+        tvEstadoGeneral?.text = if (ph in 6.5..8.5 && temp in 20.0..30.0) {
+            "Estado: Óptimo"
+        } else {
+            "Estado: Requiere atención"
+        }
     }
 }
