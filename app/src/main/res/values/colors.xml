@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
-    <color name="splash_bg">#1A237E</color>
-    <color name="splash_accent">#00E676</color>
-    <color name="splash_secondary">#FF4081</color>
-    <color name="splash_gradient">#FF00B8D4</color>
+    <!-- light theme -->
+    <color name="color_primary">#3B82F6</color>
+    <color name="color_primary_variant">#60A5FA</color>
+    <color name="color_background_light">#EFF6FF</color>
+    <color name="color_on_primary">#FFFFFF</color>
+
+    <!-- dark theme -->
+    <color name="color_primary_dark">#1E3A8A</color>
+    <color name="color_primary_variant_dark">#60A5FA</color>
+    <color name="color_background_dark">#1E3A8A</color>
+    <color name="color_on_primary_dark">#FFFFFF</color>
 </resources>

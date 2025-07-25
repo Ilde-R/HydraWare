@@ -3,6 +3,10 @@
     <style name="Base.Theme.Hydraware" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="colorPrimary">@color/color_primary</item>
+        <item name="colorPrimaryContainer">@color/color_primary_variant</item>
+        <item name="colorOnPrimary">@color/color_on_primary</item>
+        <item name="android:colorBackground">@color/color_background_light</item>
     </style>
 
     <style name="Theme.Hydraware" parent="Base.Theme.Hydraware" />
