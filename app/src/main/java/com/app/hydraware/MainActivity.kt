@@ -37,9 +37,7 @@ class MainActivity : AppCompatActivity() {
 
         // Acción del FAB
         fabCenter.setOnClickListener {
-            Toast.makeText(this, "Botón central (FAB) pulsado", Toast.LENGTH_SHORT).show()
-            // Puedes iniciar una nueva actividad o fragmento aquí si lo deseas
-            // startActivity(Intent(this, RegistroMedicionActivity::class.java))
+            loadFragment(TankFragment())
         }
     }
 

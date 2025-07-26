@@ -1,0 +1,103 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!-- Nombre tanque -->
+        <EditText
+            android:id="@+id/etTankName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Nombre del Tanque"
+            android:inputType="text" />
+
+        <!-- Medir pH -->
+        <CheckBox
+            android:id="@+id/cbPh"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Medir pH" />
+
+        <!-- Rango pH (mín y máx) -->
+        <LinearLayout
+            android:id="@+id/layoutPhRange"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:layout_marginStart="20dp"
+            android:layout_marginBottom="8dp">
+
+            <EditText
+                android:id="@+id/etPhMin"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:hint="pH mínimo"
+                android:inputType="numberDecimal" />
+
+            <EditText
+                android:id="@+id/etPhMax"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:hint="pH máximo"
+                android:inputType="numberDecimal"
+                android:layout_marginStart="8dp" />
+        </LinearLayout>
+
+        <!-- Medir Temperatura -->
+        <CheckBox
+            android:id="@+id/cbTemperature"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Medir Temperatura" />
+
+        <!-- Rango Temperatura (mín y máx) -->
+        <LinearLayout
+            android:id="@+id/layoutTempRange"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:layout_marginStart="20dp"
+            android:layout_marginBottom="8dp">
+
+            <EditText
+                android:id="@+id/etTempMin"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:hint="Temp. mínima (°C)"
+                android:inputType="numberDecimal" />
+
+            <EditText
+                android:id="@+id/etTempMax"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:hint="Temp. máxima (°C)"
+                android:inputType="numberDecimal"
+                android:layout_marginStart="8dp" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnSaveTank"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Guardar Tanque"
+            android:layout_marginTop="16dp" />
+        <Button
+            android:id="@+id/btnEnviarFalso"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Enviar registro falso"
+            android:layout_marginTop="16dp" />
+
+    </LinearLayout>
+</ScrollView>
