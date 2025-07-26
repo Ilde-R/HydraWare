@@ -17,6 +17,8 @@ class TankFragment : Fragment() {
     private var _binding: FragmentTankBinding? = null
     private val binding get() = _binding!!
 
+    private var tanqueIdEdit: String? = null  // ID del tanque en edición
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -28,12 +30,20 @@ class TankFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Mostrar/Ocultar rangos
+        // Mostrar/Ocultar rangos según checkbox
         binding.cbPh.setOnCheckedChangeListener { _, isChecked ->
             binding.layoutPhRange.visibility = if (isChecked) View.VISIBLE else View.GONE
         }
         binding.cbTemperature.setOnCheckedChangeListener { _, isChecked ->
             binding.layoutTempRange.visibility = if (isChecked) View.VISIBLE else View.GONE
+        }
+
+        // Leer argumentos para modo edición
+        val args = arguments
+        if (args != null && args.getString("modo") == "editar") {
+            tanqueIdEdit = args.getString("tanqueId")
+            tanqueIdEdit?.let { cargarDatosTanque(it) }
+            binding.etTankName.setText(args.getString("nombreTanque") ?: "")
         }
 
         binding.btnSaveTank.setOnClickListener {
@@ -45,6 +55,34 @@ class TankFragment : Fragment() {
         }
     }
 
+    private fun cargarDatosTanque(tanqueId: String) {
+        if (tanqueId.isBlank()) return
+
+        val configRef = FirebaseDatabase.getInstance()
+            .getReference("tanques")
+            .child(tanqueId)
+            .child("config")
+
+        configRef.get().addOnSuccessListener { snapshot ->
+            val b = _binding ?: return@addOnSuccessListener
+
+            if (snapshot.exists()) {
+                b.etTankName.setText(snapshot.child("name").getValue(String::class.java) ?: "")
+                b.cbPh.isChecked = snapshot.child("hasPh").getValue(Boolean::class.java) ?: false
+                b.cbTemperature.isChecked = snapshot.child("hasTemperatura").getValue(Boolean::class.java) ?: false
+                b.etPhMin.setText(snapshot.child("phMin").getValue(Double::class.java)?.toString() ?: "0.0")
+                b.etPhMax.setText(snapshot.child("phMax").getValue(Double::class.java)?.toString() ?: "0.0")
+                b.etTempMin.setText(snapshot.child("tempMin").getValue(Double::class.java)?.toString() ?: "0.0")
+                b.etTempMax.setText(snapshot.child("tempMax").getValue(Double::class.java)?.toString() ?: "0.0")
+
+                // Mostrar/ocultar rangos
+                b.layoutPhRange.visibility = if (b.cbPh.isChecked) View.VISIBLE else View.GONE
+                b.layoutTempRange.visibility = if (b.cbTemperature.isChecked) View.VISIBLE else View.GONE
+            }
+        }.addOnFailureListener {
+            Toast.makeText(requireContext(), "Error al cargar datos", Toast.LENGTH_SHORT).show()
+        }
+    }
     private fun guardarConfigTanque() {
         val name = binding.etTankName.text.toString().trim()
         if (name.isBlank()) {
@@ -53,9 +91,10 @@ class TankFragment : Fragment() {
         }
 
         val database = FirebaseDatabase.getInstance()
-        // Usar el nombre como nodo raíz, cuidando caracteres no válidos (opcional)
-        val sanitizedName = name.replace(".", "_")  // Firebase no permite puntos en claves
-        val configRef = database.getReference("tanques").child(sanitizedName).child("config")
+        // Si está editando usa tanqueIdEdit, si no usa nombre limpio
+        val nodeId = tanqueIdEdit ?: name.replace(".", "_")
+
+        val configRef = database.getReference("tanques").child(nodeId).child("config")
 
         val hasPh = binding.cbPh.isChecked
         val hasTemperatura = binding.cbTemperature.isChecked
@@ -83,7 +122,6 @@ class TankFragment : Fragment() {
             }
     }
 
-
     private fun enviarRegistroFalso() {
         val name = binding.etTankName.text.toString().trim()
         if (name.isBlank()) {
@@ -91,10 +129,10 @@ class TankFragment : Fragment() {
             return
         }
 
-        val sanitizedName = name.replace(".", "_")
+        val nodeId = tanqueIdEdit ?: name.replace(".", "_")
         val database = FirebaseDatabase.getInstance()
-        val historialRef = database.getReference("tanques").child(sanitizedName).child("historial")
-        val ultimaLecturaRef = database.getReference("tanques").child(sanitizedName).child("ultimaLectura")
+        val historialRef = database.getReference("tanques").child(nodeId).child("historial")
+        val ultimaLecturaRef = database.getReference("tanques").child(nodeId).child("ultimaLectura")
 
         val sdfTimestamp = SimpleDateFormat("yyyy-MM-dd_HH:mm:ss", Locale.getDefault())
         val sdfFecha = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
@@ -131,7 +169,6 @@ class TankFragment : Fragment() {
                 Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_LONG).show()
             }
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()

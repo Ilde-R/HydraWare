@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
@@ -88,7 +89,11 @@ class HomeFragment : Fragment() {
                         textTempStatus.setTextColor(Color.GREEN)
                     }
 
-                    // Acción al hacer clic: ir a análisis via MainActivity
+                    // Obtener botones Editar y Eliminar
+                    val btnEdit = itemView.findViewById<Button>(R.id.btnEdit)
+                    val btnDelete = itemView.findViewById<Button>(R.id.btnDelete)
+
+                    // Acción para ir a análisis (clic general en item)
                     itemView.setOnClickListener {
                         val fragment = AnalisisFragment()
                         val bundle = Bundle().apply {
@@ -100,9 +105,35 @@ class HomeFragment : Fragment() {
                             putString("hora", hora)
                         }
                         fragment.arguments = bundle
-
-                        // Llama la función pública de MainActivity para hacer el cambio y actualizar el menú
                         (activity as? MainActivity)?.switchFragment(fragment, R.id.nav_analysis)
+                    }
+
+                    // Acción editar tanque
+                    btnEdit.setOnClickListener {
+                        val fragment = TankFragment() // Fragmento para edición
+                        val bundle = Bundle().apply {
+                            putString("modo", "editar")
+                            putString("tanqueId", tanqueSnapshot.key)
+                            putString("nombreTanque", name)
+                            // Puedes agregar más datos aquí si quieres mostrar al cargar
+                        }
+                        fragment.arguments = bundle
+                        (activity as? MainActivity)?.switchFragment(fragment, R.id.nav_home)  // IMPORTANTE: Asegúrate que R.id.nav_home es el id correcto para el menú que carga TankFragment
+                    }
+
+                    // Acción eliminar tanque
+                    btnDelete.setOnClickListener {
+                        val tanqueId = tanqueSnapshot.key
+                        if (tanqueId != null) {
+                            database.child(tanqueId).removeValue()
+                                .addOnSuccessListener {
+                                    Toast.makeText(context, "Tanque eliminado correctamente", Toast.LENGTH_SHORT).show()
+                                    cargarTanques() // Refresca la lista
+                                }
+                                .addOnFailureListener {
+                                    Toast.makeText(context, "Error al eliminar tanque", Toast.LENGTH_SHORT).show()
+                                }
+                        }
                     }
 
                     containerTanques.addView(itemView)
@@ -115,4 +146,5 @@ class HomeFragment : Fragment() {
             }
         })
     }
+
 }
