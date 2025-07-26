@@ -55,7 +55,7 @@ class TankFragment : Fragment() {
         val database = FirebaseDatabase.getInstance()
         // Usar el nombre como nodo raíz, cuidando caracteres no válidos (opcional)
         val sanitizedName = name.replace(".", "_")  // Firebase no permite puntos en claves
-        val configRef = database.getReference(sanitizedName).child("config")
+        val configRef = database.getReference("tanques").child(sanitizedName).child("config")
 
         val hasPh = binding.cbPh.isChecked
         val hasTemperatura = binding.cbTemperature.isChecked
@@ -93,8 +93,8 @@ class TankFragment : Fragment() {
 
         val sanitizedName = name.replace(".", "_")
         val database = FirebaseDatabase.getInstance()
-        val historialRef = database.getReference(sanitizedName).child("historial")
-        val ultimaLecturaRef = database.getReference(sanitizedName).child("ultimaLectura")
+        val historialRef = database.getReference("tanques").child(sanitizedName).child("historial")
+        val ultimaLecturaRef = database.getReference("tanques").child(sanitizedName).child("ultimaLectura")
 
         val sdfTimestamp = SimpleDateFormat("yyyy-MM-dd_HH:mm:ss", Locale.getDefault())
         val sdfFecha = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())

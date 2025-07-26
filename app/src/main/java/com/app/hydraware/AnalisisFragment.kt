@@ -19,8 +19,28 @@ class AnalisisFragment : Fragment() {
     private val listaLecturas = mutableListOf<Lectura>()
     private lateinit var adapter: LecturaAdapter
 
-    // Para controlar qué ítem está expandido (-1 significa ninguno)
     private var expandedPosition = -1
+
+    // Parámetros del tanque
+    private var tanqueId: String? = null
+    private var tanqueName: String? = null
+    private var phMin: Double = 6.5  // valores por defecto
+    private var phMax: Double = 8.5
+    private var tempMin: Double = 20.0
+    private var tempMax: Double = 30.0
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        tanqueId = arguments?.getString("tanqueId")
+        tanqueName = arguments?.getString("tanqueName") // clave corregida
+
+        // Recibir parámetros rango si se pasaron
+        phMin = arguments?.getDouble("phMin") ?: phMin
+        phMax = arguments?.getDouble("phMax") ?: phMax
+        tempMin = arguments?.getDouble("tempMin") ?: tempMin
+        tempMax = arguments?.getDouble("tempMax") ?: tempMax
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -44,93 +64,94 @@ class AnalisisFragment : Fragment() {
                 if (previousExpanded != -1) adapter.notifyItemChanged(previousExpanded)
                 adapter.notifyItemChanged(expandedPosition)
 
-                // Mostrar datos seleccionados en los cards principales
-                mostrarLecturaSeleccionada(listaLecturas[clickedPosition])
+                mostrarLecturaSeleccionada(listaLecturas[clickedPosition], view)
             }
         )
-
         rvHistorialLecturas.adapter = adapter
 
         database = FirebaseDatabase.getInstance().reference
-        val historialRef = database.child("historial")
 
-        historialRef.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                listaLecturas.clear()
-                for (lecturaSnap in snapshot.children) {
-                    val lectura = lecturaSnap.getValue(Lectura::class.java)
-                    if (lectura != null) {
-                        listaLecturas.add(lectura)
+        tanqueId?.let { id ->
+            val historialRef = database.child("tanques").child(id).child("historial")
+            historialRef.addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    listaLecturas.clear()
+                    for (lecturaSnap in snapshot.children) {
+                        val lectura = lecturaSnap.getValue(Lectura::class.java)
+                        if (lectura != null) {
+                            listaLecturas.add(lectura)
+                        }
+                    }
+                    listaLecturas.reverse()
+
+                    expandedPosition = -1
+                    adapter.notifyDataSetChanged()
+
+                    if (listaLecturas.isNotEmpty()) {
+                        mostrarLecturaSeleccionada(listaLecturas[0], view)
                     }
                 }
-                // Mostrar datos más recientes primero
-                listaLecturas.reverse()
 
-                // Resetear expandido al actualizar lista para evitar inconsistencia
-                expandedPosition = -1
-
-                adapter.notifyDataSetChanged()
-
-                // Opcional: mostrar el primer dato si existe
-                if (listaLecturas.isNotEmpty()) {
-                    mostrarLecturaSeleccionada(listaLecturas[0])
+                override fun onCancelled(error: DatabaseError) {
+                    Log.e("Firebase", "Error al leer historial", error.toException())
                 }
-            }
+            })
 
-            override fun onCancelled(error: DatabaseError) {
-                Log.e("Firebase", "Error al leer historial", error.toException())
-            }
-        })
+            val tvTitulo = view.findViewById<TextView>(R.id.tvTitulo)
+            tvTitulo.text = "Análisis del Tanque: ${tanqueName ?: id}"
+        } ?: run {
+            Log.e("AnalisisFragment", "No se recibió tanqueId")
+        }
     }
 
-    private fun mostrarLecturaSeleccionada(lectura: Lectura) {
-        val tvFechaHora = view?.findViewById<TextView>(R.id.tvFechaHora)
-        val tvValorPH = view?.findViewById<TextView>(R.id.tvValorPH)
-        val tvRangoPH = view?.findViewById<TextView>(R.id.tvRangoPH)
-        val tvRecomendacionPH = view?.findViewById<TextView>(R.id.tvRecomendacionPH)
+    private fun mostrarLecturaSeleccionada(lectura: Lectura, rootView: View) {
+        val tvFechaHora = rootView.findViewById<TextView>(R.id.tvFechaHoraActual)
+        val tvValorPH = rootView.findViewById<TextView>(R.id.tvValorPHActual)
+        val tvRangoPH = rootView.findViewById<TextView>(R.id.tvRangoPHActual)
+        val tvRecomendacionPH = rootView.findViewById<TextView>(R.id.tvRecomendacionPHActual)
 
-        val tvValorTemp = view?.findViewById<TextView>(R.id.tvValorTemp)
-        val tvRangoTemp = view?.findViewById<TextView>(R.id.tvRangoTemp)
-        val tvRecomendacionTemp = view?.findViewById<TextView>(R.id.tvRecomendacionTemp)
+        val tvValorTemp = rootView.findViewById<TextView>(R.id.tvValorTempActual)
+        val tvRangoTemp = rootView.findViewById<TextView>(R.id.tvRangoTempActual)
+        val tvRecomendacionTemp = rootView.findViewById<TextView>(R.id.tvRecomendacionTempActual)
 
-        val tvEstadoGeneral = view?.findViewById<TextView>(R.id.tvEstadoGeneral)
+        val tvEstadoGeneral = rootView.findViewById<TextView>(R.id.tvEstadoGeneralActual)
 
-        tvFechaHora?.text = "Fecha: ${lectura.fecha ?: "--"} / Hora: ${lectura.hora ?: "--"}"
-        tvValorPH?.text = lectura.ph?.toString() ?: "No hay datos"
+        tvFechaHora.text = "Fecha: ${lectura.fecha ?: "--"} / Hora: ${lectura.hora ?: "--"}"
+        tvValorPH.text = lectura.ph?.toString() ?: "No hay datos"
         val ph = lectura.ph ?: 0.0
         when {
-            ph < 6.5 -> {
-                tvRangoPH?.text = "pH bajo"
-                tvRecomendacionPH?.text = "Ajustar pH al alza"
+            ph < phMin -> {
+                tvRangoPH.text = "pH bajo"
+                tvRecomendacionPH.text = "Ajustar pH al alza"
             }
-            ph in 6.5..8.5 -> {
-                tvRangoPH?.text = "pH normal"
-                tvRecomendacionPH?.text = "Condiciones óptimas"
+            ph in phMin..phMax -> {
+                tvRangoPH.text = "pH normal"
+                tvRecomendacionPH.text = "Condiciones óptimas"
             }
             else -> {
-                tvRangoPH?.text = "pH alto"
-                tvRecomendacionPH?.text = "Ajustar pH a la baja"
+                tvRangoPH.text = "pH alto"
+                tvRecomendacionPH.text = "Ajustar pH a la baja"
             }
         }
 
-        tvValorTemp?.text = lectura.temperatura?.toString() ?: "No hay datos"
+        tvValorTemp.text = lectura.temperatura?.toString() ?: "No hay datos"
         val temp = lectura.temperatura ?: 0.0
         when {
-            temp < 20 -> {
-                tvRangoTemp?.text = "Temperatura baja"
-                tvRecomendacionTemp?.text = "Aumentar temperatura"
+            temp < tempMin -> {
+                tvRangoTemp.text = "Temperatura baja"
+                tvRecomendacionTemp.text = "Aumentar temperatura"
             }
-            temp in 20.0..30.0 -> {
-                tvRangoTemp?.text = "Temperatura normal"
-                tvRecomendacionTemp?.text = "Condiciones óptimas"
+            temp in tempMin..tempMax -> {
+                tvRangoTemp.text = "Temperatura normal"
+                tvRecomendacionTemp.text = "Condiciones óptimas"
             }
             else -> {
-                tvRangoTemp?.text = "Temperatura alta"
-                tvRecomendacionTemp?.text = "Reducir temperatura"
+                tvRangoTemp.text = "Temperatura alta"
+                tvRecomendacionTemp.text = "Reducir temperatura"
             }
         }
 
-        tvEstadoGeneral?.text = if (ph in 6.5..8.5 && temp in 20.0..30.0) {
+        tvEstadoGeneral.text = if (ph in phMin..phMax && temp in tempMin..tempMax) {
             "Estado: Óptimo"
         } else {
             "Estado: Requiere atención"

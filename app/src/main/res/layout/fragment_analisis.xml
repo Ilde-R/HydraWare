@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- NestedScrollView para scroll anidado -->
+    <!-- Scroll anidado para permitir scroll dentro de la pantalla -->
     <androidx.core.widget.NestedScrollView
         android:id="@+id/scrollContent"
         android:layout_width="match_parent"
@@ -20,7 +20,8 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:gravity="center_horizontal"
-            android:paddingHorizontal="16dp">
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp">
 
             <!-- Título -->
             <TextView
@@ -35,7 +36,7 @@
 
             <!-- Fecha y Hora -->
             <TextView
-                android:id="@+id/tvFechaHora"
+                android:id="@+id/tvFechaHoraActual"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Fecha: -- / Hora: --"
@@ -45,7 +46,7 @@
 
             <!-- Estado General -->
             <TextView
-                android:id="@+id/tvEstadoGeneral"
+                android:id="@+id/tvEstadoGeneralActual"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Estado: Cargando..."
@@ -78,7 +79,7 @@
                         android:textColor="#222222" />
 
                     <TextView
-                        android:id="@+id/tvValorPH"
+                        android:id="@+id/tvValorPHActual"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="No hay datos"
@@ -88,7 +89,7 @@
                         android:layout_marginTop="8dp" />
 
                     <TextView
-                        android:id="@+id/tvRangoPH"
+                        android:id="@+id/tvRangoPHActual"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="No hay datos"
@@ -97,7 +98,7 @@
                         android:layout_marginTop="4dp" />
 
                     <TextView
-                        android:id="@+id/tvRecomendacionPH"
+                        android:id="@+id/tvRecomendacionPHActual"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Cargando..."
@@ -132,7 +133,7 @@
                         android:textColor="#222222" />
 
                     <TextView
-                        android:id="@+id/tvValorTemp"
+                        android:id="@+id/tvValorTempActual"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="No hay datos"
@@ -142,7 +143,7 @@
                         android:layout_marginTop="8dp" />
 
                     <TextView
-                        android:id="@+id/tvRangoTemp"
+                        android:id="@+id/tvRangoTempActual"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="No hay datos"
@@ -151,7 +152,7 @@
                         android:layout_marginTop="4dp" />
 
                     <TextView
-                        android:id="@+id/tvRecomendacionTemp"
+                        android:id="@+id/tvRecomendacionTempActual"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Cargando..."
@@ -169,15 +170,15 @@
                 app:cardCornerRadius="12dp"
                 app:cardElevation="8dp">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerHistorial"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="8dp"
-                android:clipToPadding="false"
-                android:nestedScrollingEnabled="false"
-                android:overScrollMode="never"
-                android:scrollbars="vertical" />
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerHistorial"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    android:clipToPadding="false"
+                    android:nestedScrollingEnabled="false"
+                    android:overScrollMode="never"
+                    android:scrollbars="vertical" />
             </androidx.cardview.widget.CardView>
 
         </LinearLayout>
