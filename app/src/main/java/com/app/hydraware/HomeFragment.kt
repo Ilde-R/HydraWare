@@ -17,6 +17,7 @@ class HomeFragment : Fragment() {
 
     private lateinit var database: DatabaseReference
     private lateinit var containerTanques: LinearLayout
+    private var tanquesListener: ValueEventListener? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -28,17 +29,22 @@ class HomeFragment : Fragment() {
         return view
     }
 
-    override fun onResume() {
-        super.onResume()
+    override fun onStart() {
+        super.onStart()
         cargarTanques()
     }
 
-    private fun cargarTanques() {
-        containerTanques.removeAllViews() // Limpiar para evitar duplicados
+    override fun onStop() {
+        super.onStop()
+        tanquesListener?.let { database.removeEventListener(it) }
+    }
 
-        database.addListenerForSingleValueEvent(object : ValueEventListener {
+    private fun cargarTanques() {
+        containerTanques.removeAllViews()
+
+        tanquesListener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                Log.d("FirebaseDebug", "Total tanques: ${snapshot.childrenCount}")
+                containerTanques.removeAllViews()
 
                 if (!snapshot.exists()) {
                     Toast.makeText(context, "No hay tanques disponibles", Toast.LENGTH_SHORT).show()
@@ -48,14 +54,18 @@ class HomeFragment : Fragment() {
                 for (tanqueSnapshot in snapshot.children) {
                     val config = tanqueSnapshot.child("config")
                     val lectura = tanqueSnapshot.child("ultimaLectura")
+                    val tanqueId = tanqueSnapshot.key ?: continue
 
-                    val name = config.child("name").getValue(String::class.java) ?: tanqueSnapshot.key ?: "Sin nombre"
+                    val name = config.child("name").getValue(String::class.java) ?: "Sin nombre"
                     val ph = lectura.child("ph").getValue(Double::class.java) ?: 0.0
                     val temperatura = lectura.child("temperatura").getValue(Double::class.java) ?: 0.0
                     val fecha = lectura.child("fecha").getValue(String::class.java) ?: "-"
                     val hora = lectura.child("hora").getValue(String::class.java) ?: "-"
 
-                    Toast.makeText(context, "Cargado: $name", Toast.LENGTH_SHORT).show()
+                    val phMin = config.child("phMin").getValue(Double::class.java) ?: 0.0
+                    val phMax = config.child("phMax").getValue(Double::class.java) ?: 14.0
+                    val tempMin = config.child("tempMin").getValue(Double::class.java) ?: -50.0
+                    val tempMax = config.child("tempMax").getValue(Double::class.java) ?: 100.0
 
                     val itemView = layoutInflater.inflate(R.layout.item_tanque, containerTanques, false)
 
@@ -67,12 +77,12 @@ class HomeFragment : Fragment() {
                     val textFechaHora = itemView.findViewById<TextView>(R.id.textDateTimeValue)
 
                     textName.text = name
-                    textPh.text = "pH: $ph"
-                    textTemp.text = "Temp: $temperatura °C"
+                    textPh.text = "pH: %.2f".format(ph)
+                    textTemp.text = "Temp: %.2f°C".format(temperatura)
                     textFechaHora.text = "Última lectura: $fecha $hora"
 
-                    // Estado de pH
-                    if (ph < 6.5 || ph > 8.5) {
+                    // Validar pH
+                    if (ph < phMin || ph > phMax) {
                         textPhStatus.text = "pH FUERA DE RANGO"
                         textPhStatus.setTextColor(Color.RED)
                     } else {
@@ -80,8 +90,8 @@ class HomeFragment : Fragment() {
                         textPhStatus.setTextColor(Color.GREEN)
                     }
 
-                    // Estado de Temperatura
-                    if (temperatura < 24 || temperatura > 30) {
+                    // Validar Temp
+                    if (temperatura < tempMin || temperatura > tempMax) {
                         textTempStatus.text = "TEMP FUERA DE RANGO"
                         textTempStatus.setTextColor(Color.RED)
                     } else {
@@ -89,15 +99,13 @@ class HomeFragment : Fragment() {
                         textTempStatus.setTextColor(Color.GREEN)
                     }
 
-                    // Obtener botones Editar y Eliminar
                     val btnEdit = itemView.findViewById<Button>(R.id.btnEdit)
                     val btnDelete = itemView.findViewById<Button>(R.id.btnDelete)
 
-                    // Acción para ir a análisis (clic general en item)
                     itemView.setOnClickListener {
                         val fragment = AnalisisFragment()
                         val bundle = Bundle().apply {
-                            putString("tanqueId", tanqueSnapshot.key)
+                            putString("tanqueId", tanqueId)
                             putString("nombreTanque", name)
                             putDouble("ph", ph)
                             putDouble("temperatura", temperatura)
@@ -108,32 +116,26 @@ class HomeFragment : Fragment() {
                         (activity as? MainActivity)?.switchFragment(fragment, R.id.nav_analysis)
                     }
 
-                    // Acción editar tanque
                     btnEdit.setOnClickListener {
-                        val fragment = TankFragment() // Fragmento para edición
+                        val fragment = TankFragment()
                         val bundle = Bundle().apply {
                             putString("modo", "editar")
-                            putString("tanqueId", tanqueSnapshot.key)
+                            putString("tanqueId", tanqueId)
                             putString("nombreTanque", name)
-                            // Puedes agregar más datos aquí si quieres mostrar al cargar
                         }
                         fragment.arguments = bundle
-                        (activity as? MainActivity)?.switchFragment(fragment, R.id.nav_home)  // IMPORTANTE: Asegúrate que R.id.nav_home es el id correcto para el menú que carga TankFragment
+                        (activity as? MainActivity)?.switchFragment(fragment, R.id.nav_home)
                     }
 
-                    // Acción eliminar tanque
                     btnDelete.setOnClickListener {
-                        val tanqueId = tanqueSnapshot.key
-                        if (tanqueId != null) {
-                            database.child(tanqueId).removeValue()
-                                .addOnSuccessListener {
-                                    Toast.makeText(context, "Tanque eliminado correctamente", Toast.LENGTH_SHORT).show()
-                                    cargarTanques() // Refresca la lista
-                                }
-                                .addOnFailureListener {
-                                    Toast.makeText(context, "Error al eliminar tanque", Toast.LENGTH_SHORT).show()
-                                }
-                        }
+                        database.child(tanqueId).removeValue()
+                            .addOnSuccessListener {
+                                Toast.makeText(context, "Tanque eliminado correctamente", Toast.LENGTH_SHORT).show()
+                                cargarTanques()
+                            }
+                            .addOnFailureListener {
+                                Toast.makeText(context, "Error al eliminar tanque", Toast.LENGTH_SHORT).show()
+                            }
                     }
 
                     containerTanques.addView(itemView)
@@ -144,7 +146,8 @@ class HomeFragment : Fragment() {
                 Toast.makeText(context, "Error al cargar tanques", Toast.LENGTH_SHORT).show()
                 Log.e("FirebaseError", error.message)
             }
-        })
-    }
+        }
 
+        database.addValueEventListener(tanquesListener!!)
+    }
 }
