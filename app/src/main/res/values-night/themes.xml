@@ -1,11 +1,36 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Base.Theme.Hydraware" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
-        <item name="colorPrimary">@color/color_primary_dark</item>
-        <item name="colorPrimaryContainer">@color/color_primary_variant_dark</item>"
-        <item name="colorOnPrimary">@color/color_on_primary_dark</item>
-        <item name="android:colorBackground">@color/color_background_dark</item>
+        <!-- Paleta de colores para modo oscuro -->
+        <item name="colorPrimary">@color/primary_variant</item>
+        <item name="colorPrimaryContainer">@color/primary_dark</item>
+        <item name="colorOnPrimary">@color/color_on_primary</item>
+        <item name="colorOnPrimaryContainer">@color/primary_variant</item>
+        
+        <!-- Colores de superficie para modo oscuro -->
+        <item name="android:colorBackground">@color/primary_dark</item>
+        <item name="colorSurface">@color/primary_dark</item>
+        <item name="colorSurfaceVariant">@color/primary</item>
+        <item name="colorOnSurface">@color/color_on_primary</item>
+        <item name="colorOnSurfaceVariant">@color/primary_variant</item>
+        
+        <!-- Colores de estado -->
+        <item name="colorError">@color/error</item>
+        <item name="colorErrorContainer">@color/error</item>
+        <item name="colorOnError">@color/color_on_primary</item>
+        <item name="colorOnErrorContainer">@color/color_on_primary</item>
+        
+        <!-- Colores de texto para modo oscuro -->
+        <item name="android:textColorPrimary">@color/color_on_primary</item>
+        <item name="android:textColorSecondary">@color/primary_variant</item>
+        <item name="android:textColorHint">@color/primary</item>
+        
+        <!-- Configuración de la barra de estado -->
+        <item name="android:statusBarColor">@color/primary_dark</item>
+        <item name="android:windowLightStatusBar">false</item>
+        
+        <!-- Configuración de la barra de navegación -->
+        <item name="android:navigationBarColor">@color/primary_dark</item>
+        <item name="android:windowLightNavigationBar">false</item>
     </style>
 </resources>

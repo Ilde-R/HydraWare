@@ -1,103 +1,351 @@
+<?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    android:background="@color/background_light"
+    android:fillViewport="true">
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:padding="24dp">
 
-        <!-- Nombre tanque -->
-        <EditText
-            android:id="@+id/etTankName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Nombre del Tanque"
-            android:inputType="text" />
-
-        <!-- Medir pH -->
-        <CheckBox
-            android:id="@+id/cbPh"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Medir pH" />
-
-        <!-- Rango pH (mín y máx) -->
+        <!-- Header con botón de publicar -->
         <LinearLayout
-            android:id="@+id/layoutPhRange"
-            android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="gone"
-            android:layout_marginStart="20dp"
-            android:layout_marginBottom="8dp">
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="32dp">
 
-            <EditText
-                android:id="@+id/etPhMin"
+            <TextView
                 android:layout_width="0dp"
-                android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:hint="pH mínimo"
-                android:inputType="numberDecimal" />
+                android:layout_weight="1"
+                android:text="Configuración de Tanque"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textColor="@color/text_primary" />
 
-            <EditText
-                android:id="@+id/etPhMax"
-                android:layout_width="0dp"
-                android:layout_weight="1"
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSaveTank"
+                style="@style/Widget.Hydraware.Button.Primary"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="pH máximo"
-                android:inputType="numberDecimal"
-                android:layout_marginStart="8dp" />
+                android:text="Guardar"
+                android:textColor="@color/color_on_primary"
+                app:cornerRadius="8dp" />
         </LinearLayout>
 
-        <!-- Medir Temperatura -->
-        <CheckBox
-            android:id="@+id/cbTemperature"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Medir Temperatura" />
-
-        <!-- Rango Temperatura (mín y máx) -->
+        <!-- Icono central -->
         <LinearLayout
-            android:id="@+id/layoutTempRange"
-            android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="gone"
-            android:layout_marginStart="20dp"
-            android:layout_marginBottom="8dp">
+            android:gravity="center"
+            android:layout_marginBottom="24dp">
 
-            <EditText
-                android:id="@+id/etTempMin"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:hint="Temp. mínima (°C)"
-                android:inputType="numberDecimal" />
-
-            <EditText
-                android:id="@+id/etTempMax"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:hint="Temp. máxima (°C)"
-                android:inputType="numberDecimal"
-                android:layout_marginStart="8dp" />
+            <ImageView
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:src="@drawable/ic_water_drop"
+                android:tint="@color/primary"
+                android:background="@drawable/circle_background"
+                android:padding="16dp" />
         </LinearLayout>
 
-        <Button
-            android:id="@+id/btnSaveTank"
+        <!-- Título del formulario -->
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Guardar Tanque"
-            android:layout_marginTop="16dp" />
-        <Button
-            android:id="@+id/btnEnviarFalso"
+            android:text="Formulario de Tanque"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@color/text_primary"
+            android:gravity="center"
+            android:layout_marginBottom="32dp" />
+
+        <!-- Campo 1: Nombre del Tanque -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Enviar registro falso"
-            android:layout_marginTop="16dp" />
+            android:orientation="vertical"
+            android:layout_marginBottom="24dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1."
+                android:textSize="16sp"
+                android:textColor="@color/text_secondary"
+                android:layout_marginBottom="8dp" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Nombre del Tanque"
+                app:boxStrokeColor="@color/primary"
+                app:hintTextColor="@color/primary"
+                app:boxStrokeWidth="1dp"
+                app:boxCornerRadiusTopStart="8dp"
+                app:boxCornerRadiusTopEnd="8dp"
+                app:boxCornerRadiusBottomStart="8dp"
+                app:boxCornerRadiusBottomEnd="8dp"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etTankName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text"
+                    android:textColor="@color/text_primary" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+        </LinearLayout>
+
+        <!-- Campo 2: Configuración de pH -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginBottom="24dp"
+            android:background="@drawable/field_background"
+            android:padding="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="16dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="2."
+                    android:textSize="16sp"
+                    android:textColor="@color/text_secondary" />
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_more_vert"
+                    android:tint="@color/text_secondary"
+                    android:layout_marginEnd="8dp" />
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_settings"
+                    android:tint="@color/primary"
+                    android:layout_marginEnd="8dp" />
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_more_vert"
+                    android:tint="@color/text_secondary" />
+            </LinearLayout>
+
+            <com.google.android.material.checkbox.MaterialCheckBox
+                android:id="@+id/cbPh"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Medir pH"
+                android:textColor="@color/text_primary"
+                app:buttonTint="@color/primary"
+                android:layout_marginBottom="16dp" />
+
+            <LinearLayout
+                android:id="@+id/layoutPhRange"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="pH mínimo"
+                    app:boxStrokeColor="@color/primary"
+                    app:hintTextColor="@color/primary"
+                    app:boxStrokeWidth="1dp"
+                    app:boxCornerRadiusTopStart="8dp"
+                    app:boxCornerRadiusTopEnd="8dp"
+                    app:boxCornerRadiusBottomStart="8dp"
+                    app:boxCornerRadiusBottomEnd="8dp"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etPhMin"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="numberDecimal"
+                        android:textColor="@color/text_primary" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <View
+                    android:layout_width="16dp"
+                    android:layout_height="1dp" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="pH máximo"
+                    app:boxStrokeColor="@color/primary"
+                    app:hintTextColor="@color/primary"
+                    app:boxStrokeWidth="1dp"
+                    app:boxCornerRadiusTopStart="8dp"
+                    app:boxCornerRadiusTopEnd="8dp"
+                    app:boxCornerRadiusBottomStart="8dp"
+                    app:boxCornerRadiusBottomEnd="8dp"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etPhMax"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="numberDecimal"
+                        android:textColor="@color/text_primary" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Campo 3: Configuración de Temperatura -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginBottom="24dp"
+            android:background="@drawable/field_background"
+            android:padding="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="16dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="3."
+                    android:textSize="16sp"
+                    android:textColor="@color/text_secondary" />
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_more_vert"
+                    android:tint="@color/text_secondary"
+                    android:layout_marginEnd="8dp" />
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_settings"
+                    android:tint="@color/primary"
+                    android:layout_marginEnd="8dp" />
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_more_vert"
+                    android:tint="@color/text_secondary" />
+            </LinearLayout>
+
+            <com.google.android.material.checkbox.MaterialCheckBox
+                android:id="@+id/cbTemperature"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Medir Temperatura"
+                android:textColor="@color/text_primary"
+                app:buttonTint="@color/primary"
+                android:layout_marginBottom="16dp" />
+
+            <LinearLayout
+                android:id="@+id/layoutTempRange"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="Temp. mínima (°C)"
+                    app:boxStrokeColor="@color/primary"
+                    app:hintTextColor="@color/primary"
+                    app:boxStrokeWidth="1dp"
+                    app:boxCornerRadiusTopStart="8dp"
+                    app:boxCornerRadiusTopEnd="8dp"
+                    app:boxCornerRadiusBottomStart="8dp"
+                    app:boxCornerRadiusBottomEnd="8dp"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etTempMin"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="numberDecimal"
+                        android:textColor="@color/text_primary" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <View
+                    android:layout_width="16dp"
+                    android:layout_height="1dp" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="Temp. máxima (°C)"
+                    app:boxStrokeColor="@color/primary"
+                    app:hintTextColor="@color/primary"
+                    app:boxStrokeWidth="1dp"
+                    app:boxCornerRadiusTopStart="8dp"
+                    app:boxCornerRadiusTopEnd="8dp"
+                    app:boxCornerRadiusBottomStart="8dp"
+                    app:boxCornerRadiusBottomEnd="8dp"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etTempMax"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="numberDecimal"
+                        android:textColor="@color/text_primary" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Botón flotante de agregar -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:gravity="center">
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/btnEnviarFalso"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_add"
+                app:backgroundTint="@color/text_primary"
+                app:fabSize="normal"
+                app:tint="@color/color_on_primary" />
+        </LinearLayout>
 
     </LinearLayout>
 </ScrollView>

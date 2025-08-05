@@ -1,13 +1,59 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Base.Theme.Hydraware" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
-        <item name="colorPrimary">@color/color_primary</item>
-        <item name="colorPrimaryContainer">@color/color_primary_variant</item>
+        <!-- Paleta de colores principal -->
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryContainer">@color/primary_variant</item>
         <item name="colorOnPrimary">@color/color_on_primary</item>
-        <item name="android:colorBackground">@color/color_background_light</item>
+        <item name="colorOnPrimaryContainer">@color/primary_dark</item>
+        
+        <!-- Colores de superficie -->
+        <item name="android:colorBackground">@color/background_light</item>
+        <item name="colorSurface">@color/surface</item>
+        <item name="colorSurfaceVariant">@color/surface_variant</item>
+        <item name="colorOnSurface">@color/on_surface</item>
+        <item name="colorOnSurfaceVariant">@color/on_surface_variant</item>
+        
+        <!-- Colores de estado -->
+        <item name="colorError">@color/error</item>
+        <item name="colorErrorContainer">@color/error</item>
+        <item name="colorOnError">@color/color_on_primary</item>
+        <item name="colorOnErrorContainer">@color/color_on_primary</item>
+        
+        <!-- Colores de texto -->
+        <item name="android:textColorPrimary">@color/text_primary</item>
+        <item name="android:textColorSecondary">@color/text_secondary</item>
+        <item name="android:textColorHint">@color/text_disabled</item>
+        
+        <!-- Configuración de la barra de estado -->
+        <item name="android:statusBarColor">@color/primary</item>
+        <item name="android:windowLightStatusBar">false</item>
+        
+        <!-- Configuración de la barra de navegación -->
+        <item name="android:navigationBarColor">@color/background_light</item>
+        <item name="android:windowLightNavigationBar">true</item>
     </style>
 
     <style name="Theme.Hydraware" parent="Base.Theme.Hydraware" />
+    
+    <!-- Estilo para botones principales -->
+    <style name="Widget.Hydraware.Button.Primary" parent="Widget.Material3.Button">
+        <item name="backgroundTint">@color/primary</item>
+        <item name="android:textColor">@color/color_on_primary</item>
+        <item name="cornerRadius">12dp</item>
+    </style>
+    
+    <!-- Estilo para botones secundarios -->
+    <style name="Widget.Hydraware.Button.Secondary" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="strokeColor">@color/primary</item>
+        <item name="android:textColor">@color/primary</item>
+        <item name="cornerRadius">12dp</item>
+    </style>
+    
+    <!-- Estilo para tarjetas -->
+    <style name="Widget.Hydraware.Card" parent="Widget.Material3.CardView.Elevated">
+        <item name="cardBackgroundColor">@color/surface</item>
+        <item name="cardElevation">4dp</item>
+        <item name="cornerRadius">16dp</item>
+    </style>
 </resources>

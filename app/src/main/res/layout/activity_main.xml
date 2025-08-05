@@ -2,7 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/background_light">
 
     <!-- Contenedor para los Fragments -->
     <FrameLayout
@@ -17,9 +18,9 @@
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:layout_alignParentBottom="true"
-        android:background="@android:color/white"
-        app:itemIconTint="@color/color_primary"
-        app:itemTextColor="@color/color_primary"
+        android:background="@color/surface"
+        app:itemIconTint="@color/primary"
+        app:itemTextColor="@color/primary"
         app:labelVisibilityMode="labeled"
         app:menu="@menu/bottom_nav_menu" />
 
@@ -31,8 +32,8 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="28dp"
-        android:src="@drawable/ic_android_logo"
-        android:contentDescription="Botón de acción"
-        app:backgroundTint="@color/color_primary"
-        app:tint="@android:color/white" />
+        android:src="@drawable/ic_water_drop"
+        android:contentDescription="Agregar tanque"
+        app:backgroundTint="@color/primary"
+        app:tint="@color/color_on_primary" />
 </RelativeLayout>
