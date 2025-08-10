@@ -34,14 +34,14 @@
 
             <!-- Nombre -->
             <TextView
-                android:id="@+id/textTanqueName"
+                android:id="@+id/textEstanqueName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Estanque 1"
                 android:textStyle="bold"
-                android:textSize="16sp"
+                android:textSize="20sp"
                 android:layout_gravity="center_horizontal"
-                android:paddingBottom="12dp" />
+                android:paddingBottom="14dp" />
 
             <!-- Datos pH y temperatura -->
             <LinearLayout
@@ -59,7 +59,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Nivel pH"
+                        android:text="Nivel Ph"
                         android:textStyle="bold"
                         android:paddingBottom="4dp" />
 
@@ -177,7 +177,7 @@
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:text="Eliminar"
-                    android:textColor="@android:color/holo_red_dark"
+                    android:textColor="@android:color/white"
                     android:textSize="12sp"
                     android:paddingVertical="6dp" />
             </LinearLayout>

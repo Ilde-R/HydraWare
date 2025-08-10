@@ -44,8 +44,7 @@ class MainActivity : AppCompatActivity() {
 
         // Listener para FAB
         fabCenter.setOnClickListener {
-            loadFragment(TankFragment())
-            // No actualizamos el ícono porque TankFragment no está en el menú
+            switchFragment(TankFragment())
         }
     }
 

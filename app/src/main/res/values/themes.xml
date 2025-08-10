@@ -56,4 +56,27 @@
         <item name="cardElevation">4dp</item>
         <item name="cornerRadius">16dp</item>
     </style>
+    
+    <!-- Estilo personalizado para BottomNavigationView -->
+    <style name="Widget.Hydraware.BottomNavigation" parent="Widget.Material3.BottomNavigationView">
+        <item name="itemIconSize">24dp</item>
+        <item name="itemIconTint">@color/bottom_nav_item_color</item>
+        <item name="itemTextAppearanceActive">@style/TextAppearance.Hydraware.BottomNavigation.Active</item>
+        <item name="itemTextAppearanceInactive">@style/TextAppearance.Hydraware.BottomNavigation.Inactive</item>
+        <item name="itemRippleColor">@color/primary_variant</item>
+    </style>
+    
+    <!-- Estilo para texto activo en BottomNavigation -->
+    <style name="TextAppearance.Hydraware.BottomNavigation.Active" parent="TextAppearance.Material3.LabelSmall">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/primary</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+    
+    <!-- Estilo para texto inactivo en BottomNavigation -->
+    <style name="TextAppearance.Hydraware.BottomNavigation.Inactive" parent="TextAppearance.Material3.LabelSmall">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/on_surface_variant</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
 </resources>

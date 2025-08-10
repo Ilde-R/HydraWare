@@ -69,7 +69,7 @@ class HomeFragment : Fragment() {
 
                     val itemView = layoutInflater.inflate(R.layout.item_tanque, containerTanques, false)
 
-                    val textName = itemView.findViewById<TextView>(R.id.textTanqueName)
+                    val textName = itemView.findViewById<TextView>(R.id.textEstanqueName)
                     val textPh = itemView.findViewById<TextView>(R.id.textPhValue)
                     val textPhStatus = itemView.findViewById<TextView>(R.id.textPhStatus)
                     val textTemp = itemView.findViewById<TextView>(R.id.textTempValue)
