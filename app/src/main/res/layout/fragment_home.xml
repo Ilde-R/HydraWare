@@ -35,13 +35,22 @@
                 android:textSize="18sp" />
         </androidx.cardview.widget.CardView>
 
+        <!-- Indicador de Estado del Sistema -->
+        <include
+            android:id="@+id/statusIndicator"
+            layout="@layout/status_indicator"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/cardWelcome"
+            android:layout_marginBottom="16dp" />
+
         <!-- Contenedor dinámico de tanques -->
         <LinearLayout
             android:id="@+id/containerTanques"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_below="@id/cardWelcome"
+            android:layout_below="@id/statusIndicator"
             android:gravity="center_horizontal" />
 
     </RelativeLayout>

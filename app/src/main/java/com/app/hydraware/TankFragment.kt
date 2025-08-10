@@ -115,10 +115,17 @@ class TankFragment : Fragment() {
 
         configRef.setValue(configData)
             .addOnSuccessListener {
-                Toast.makeText(requireContext(), "Configuración guardada", Toast.LENGTH_SHORT).show()
+                // Mensaje de confirmación
+                Toast.makeText(requireContext(), "✅ Tanque guardado exitosamente", Toast.LENGTH_LONG).show()
+                
+                // Limpiar formulario
+                limpiarFormulario()
+                
+                // Redirigir a la pantalla principal (Home)
+                redirigirAHome()
             }
             .addOnFailureListener { e ->
-                Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), "❌ Error al guardar: ${e.message}", Toast.LENGTH_LONG).show()
             }
     }
 
@@ -168,6 +175,35 @@ class TankFragment : Fragment() {
             .addOnFailureListener { e ->
                 Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_LONG).show()
             }
+    }
+
+    private fun limpiarFormulario() {
+        // Limpiar todos los campos del formulario
+        binding.etTankName.text?.clear()
+        binding.cbPh.isChecked = false
+        binding.cbTemperature.isChecked = false
+        binding.etPhMin.text?.clear()
+        binding.etPhMax.text?.clear()
+        binding.etTempMin.text?.clear()
+        binding.etTempMax.text?.clear()
+        
+        // Ocultar los layouts de rangos
+        binding.layoutPhRange.visibility = View.GONE
+        binding.layoutTempRange.visibility = View.GONE
+        
+        // Resetear el modo de edición
+        tanqueIdEdit = null
+    }
+    
+    private fun redirigirAHome() {
+        // Redirigir a la pantalla principal (Home)
+        (activity as? MainActivity)?.let { mainActivity ->
+            // Cambiar al fragmento Home
+            mainActivity.switchFragment(HomeFragment(), R.id.nav_home)
+            
+            // Seleccionar la pestaña Home en la navegación inferior
+            mainActivity.findViewById<com.google.android.material.bottomnavigation.BottomNavigationView>(R.id.bottomNavigation)?.selectedItemId = R.id.nav_home
+        }
     }
 
     override fun onDestroyView() {

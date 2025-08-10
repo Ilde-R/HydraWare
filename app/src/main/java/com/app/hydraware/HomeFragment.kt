@@ -12,12 +12,22 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.google.firebase.database.*
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 
 class HomeFragment : Fragment() {
 
     private lateinit var database: DatabaseReference
     private lateinit var containerTanques: LinearLayout
     private var tanquesListener: ValueEventListener? = null
+    private lateinit var notificationManager: NotificationManager
+    private lateinit var statusIndicator: View
+    private lateinit var indicatorPh: View
+    private lateinit var indicatorTemp: View
+    private lateinit var indicatorSystem: View
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -25,7 +35,17 @@ class HomeFragment : Fragment() {
     ): View {
         val view = inflater.inflate(R.layout.fragment_home, container, false)
         containerTanques = view.findViewById(R.id.containerTanques)
+        statusIndicator = view.findViewById(R.id.statusIndicator)
+        indicatorPh = statusIndicator.findViewById(R.id.indicatorPh)
+        indicatorTemp = statusIndicator.findViewById(R.id.indicatorTemp)
+        indicatorSystem = statusIndicator.findViewById(R.id.indicatorSystem)
+        
         database = FirebaseDatabase.getInstance().reference.child("tanques")
+        notificationManager = NotificationManager(requireContext())
+        
+        // Solicitar permisos de notificación si es necesario
+        requestNotificationPermission()
+        
         return view
     }
 
@@ -139,6 +159,21 @@ class HomeFragment : Fragment() {
                     }
 
                     containerTanques.addView(itemView)
+                    
+                    // Verificar y mostrar notificaciones
+                    notificationManager.checkAndNotify(
+                        tanqueId,
+                        name,
+                        ph,
+                        temperatura,
+                        phMin,
+                        phMax,
+                        tempMin,
+                        tempMax
+                    )
+                    
+                    // Actualizar indicadores de estado
+                    updateStatusIndicators(ph, temperatura, phMin, phMax, tempMin, tempMax)
                 }
             }
 
@@ -149,5 +184,47 @@ class HomeFragment : Fragment() {
         }
 
         database.addValueEventListener(tanquesListener!!)
+    }
+    
+    private fun requestNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(
+                    requireContext(),
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                ActivityCompat.requestPermissions(
+                    requireActivity(),
+                    arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                    100
+                )
+            }
+        }
+    }
+    
+    private fun updateStatusIndicators(ph: Double, temperatura: Double, phMin: Double, phMax: Double, tempMin: Double, tempMax: Double) {
+        // Actualizar indicador de pH
+        val phColor = when {
+            ph < phMin || ph > phMax -> Color.RED
+            ph in (phMin + 1)..(phMax - 1) -> Color.GREEN
+            else -> Color.parseColor("#FFA500") // Naranja para valores cercanos al límite
+        }
+        indicatorPh.setBackgroundColor(phColor)
+        
+        // Actualizar indicador de temperatura
+        val tempColor = when {
+            temperatura < tempMin || temperatura > tempMax -> Color.RED
+            temperatura in (tempMin + 2)..(tempMax - 2) -> Color.GREEN
+            else -> Color.parseColor("#FFA500") // Naranja para valores cercanos al límite
+        }
+        indicatorTemp.setBackgroundColor(tempColor)
+        
+        // Actualizar indicador general del sistema
+        val systemColor = when {
+            phColor == Color.RED || tempColor == Color.RED -> Color.RED
+            phColor == Color.GREEN && tempColor == Color.GREEN -> Color.GREEN
+            else -> Color.parseColor("#FFA500") // Naranja si hay alguna advertencia
+        }
+        indicatorSystem.setBackgroundColor(systemColor)
     }
 }
